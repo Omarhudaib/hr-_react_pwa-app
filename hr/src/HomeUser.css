@@ -1,0 +1,171 @@
+/* HomeUser.css */
+.mobile-app-container {
+    max-width: 100%;
+    margin: 0 auto;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+  }
+  
+  .app-header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    position: relative;
+  }
+  
+  .app-title {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  .app-main-content {
+    padding: 1rem;
+  }
+  
+  .app-card {
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .card-header {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .card-icon {
+    font-size: 1.2rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .location-info p {
+    margin: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .app-btn {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .app-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .app-btn.success {
+    background-color: #27ae60;
+    color: white;
+  }
+  
+  .app-btn.warning {
+    background-color: #f39c12;
+    color: white;
+  }
+  
+  .app-btn.secondary {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  .app-alert {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+  }
+  
+  .app-alert.success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .app-alert.error {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem 0;
+    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #2c3e50;
+    font-size: 0.9rem;
+  }
+  
+  /* Additional styles for other pages */
+  .request-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .request-table th,
+  .request-table td {
+    padding: 0.8rem;
+    text-align: right;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .profile-card {
+    text-align: right;
+  }
+  
+  .profile-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .login-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
