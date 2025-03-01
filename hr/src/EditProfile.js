@@ -78,7 +78,7 @@ const EditProfile = () => {
       }
 
       const token = localStorage.getItem("authToken");
-      const response = await axios.post(
+      const response = await axios.get(
         `https://newhrsys-production.up.railway.app/api/user/${userId}`,
         formDataToSend,
         { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
