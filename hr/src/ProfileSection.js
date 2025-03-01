@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-const ProfileSection = ({ userId }) => {
+const ProfileSection = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,24 +10,34 @@ const ProfileSection = ({ userId }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem("authToken"); // Retrieve token
+        const token = localStorage.getItem('authToken');
+        const storedUser = JSON.parse(localStorage.getItem('user'));
 
-        const response = await axios.get(`https://newhrsys-production.up.railway.app/api/user-get/${userId}`, {
-          headers: {
-            "Authorization": `Bearer ${token}`, // Add auth token
-          },
-        });
+        if (!storedUser || !storedUser.id) {
+          setError('User data not found.');
+          setLoading(false);
+          return;
+        }
+
+        const response = await axios.get(
+          `https://newhrsys-production.up.railway.app/api/user-get/${storedUser.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         setUser(response.data.user);
       } catch (err) {
-        setError("Failed to load user data.");
+        setError('Failed to load user data.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchUserData();
-  }, [userId]);
+  }, []);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-danger">{error}</p>;
