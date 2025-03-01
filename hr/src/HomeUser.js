@@ -106,12 +106,41 @@ const HomeUser = () => {
       setLoading(false);
     }
   };
-
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      await axios.post(
+        'https://newhrsys-production.up.railway.app/api/logout',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      // Clear local storage and redirect regardless of API response
+      localStorage.clear();
+      navigate('/');
+    }
+  };
   return (
     <div className="mobile-app-container">
-      <header className="app-header">
+     <header className="app-header">
         <h1 className="app-title">مرحباً، {user?.name}</h1>
-        <InstallButton />
+        <div className="header-controls">
+          <InstallButton />
+          <button 
+            className="app-btn icon-btn"
+            onClick={handleLogout}
+            title="تسجيل الخروج"
+          >
+            <FaSignOutAlt />
+          </button>
+        </div>
       </header>
 
       <main className="app-main-content">

@@ -11,14 +11,14 @@ const ProfileSection = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        setIsLoading(true); // تفعيل حالة التحميل عند بدء جلب البيانات
+// تفعيل حالة التحميل عند بدء جلب البيانات
         const token = localStorage.getItem('authToken');
         const storedUser = JSON.parse(localStorage.getItem('user'));
 
         if (!storedUser || !storedUser.id) {
           setError('User data not found.');
-          setLoading(false);
-          setIsLoading(false); // إيقاف حالة التحميل
+          setLoading(true);
+      
           return;
         }
 
@@ -61,14 +61,18 @@ const ProfileSection = () => {
       <div className="card-header">Profile Overview</div>
       <div className="card-body">
         <div className="d-flex align-items-center mb-3">
-          {user && (
-            <img
-              src={user.image_path || '/default-avatar.png'}
-              className="rounded-circle me-3"
-              alt="Profile"
-              style={{ width: '80px', height: '80px' }}
-            />
-          )}
+          
+           {/* Corrected image source with proper URL concatenation */}
+<img
+  src={user?.image_path 
+    ? `https://newhrsys-production.up.railway.app/storage/${user.image_path}`
+    : '/user.png'
+  }
+  className="rounded-circle me-3"
+  alt="Profile"
+  style={{ width: '80px', height: '80px' }}
+/>
+          
           <div>
             <h4>{user ? `${user.first_name} ${user.last_name}` : 'Loading...'}</h4>
             <p className="text-muted mb-0">{user?.role?.name || 'No Role'}</p>
@@ -77,11 +81,11 @@ const ProfileSection = () => {
         <div className="row">
           <div className="col-md-6">
             <p><strong>Employee ID:</strong> {user?.user_code || 'Loading...'}</p>
-            <p><strong>Department:</strong> {user?.department?.name || 'No Department'}</p>
+            <p><strong>Department:</strong> {user?.department?.dep_name || 'No Department'}</p>
           </div>
           <div className="col-md-6">
-            <p><strong>Email:</strong> {user?.email || 'Loading...'}</p>
-            <p><strong>Phone:</strong> {user?.phone || 'No Phone'}</p>
+            <p><strong>user_code :</strong> {user?.user_code || 'Loading...'}</p>
+  
           </div>
         </div>
         <Link to="/edit-profile" className="btn btn-dark w-100">
