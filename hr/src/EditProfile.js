@@ -32,7 +32,7 @@ const EditProfile = () => {
     const fetchUserData = async () => {
       try {
         const token = localStorage.getItem("authToken");
-        const response = await axios.post(`https://newhrsys-production.up.railway.app/api/user-get/${userId}`, {
+        const response = await axios.get(`https://newhrsys-production.up.railway.app/api/user-get/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -78,7 +78,7 @@ const EditProfile = () => {
       }
 
       const token = localStorage.getItem("authToken");
-      const response = await axios.get(
+      const response = await axios.post(
         `https://newhrsys-production.up.railway.app/api/user/${userId}`,
         formDataToSend,
         { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
