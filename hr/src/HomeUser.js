@@ -8,6 +8,17 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import Spinner from "./Spinner"; // A simple loading spinner component
 import Swal from "sweetalert2";
+import L from "leaflet";
+
+
+const locationIcon = new L.Icon({
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  shadowSize: [41, 41]
+});
 
 const HomeUser = () => {
   const [loading, setLoading] = useState(false);
@@ -37,11 +48,25 @@ const HomeUser = () => {
         `/user-checkStatus/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setCheckStatus(response.data.status);
+  
+      const { isCheckedIn, isCheckedOut } = response.data;
+  
+      // تعديل الحالة لتكون باللغة العربية
+      if (isCheckedIn) {
+        setCheckStatus("مسجل دخول");
+      } else if (isCheckedOut) {
+        setCheckStatus("مسجل خروج");
+      } else {
+        setCheckStatus("غير مسجل");
+      }
     } catch (err) {
+      setCheckStatus("غير معروف"); // تأكد من تعيين حالة افتراضية هنا باللغة العربية
       setError("فشل في جلب حالة الدخول.");
     }
   };
+  
+
+  
 
   const getLocation = () => {
     setIsFetchingLocation(true);
@@ -186,6 +211,14 @@ const HomeUser = () => {
       <main className="app-main-content">
         {success && <div className="app-alert success">{success}</div>}
         {error && <div className="app-alert error">{error}</div>}
+  
+  <div className={`status-indicator ${checkStatus === "مسجل دخول" ? "checked-in" : checkStatus === "مسجل خروج" ? "checked-out" : "غير مسجل"}`}>
+    <p>الحالة الحالية: <strong>{checkStatus || "غير معروف"}</strong></p>
+  </div>
+  
+
+
+
 
         <div className="app-card">
           <div className="card-header">
@@ -206,9 +239,9 @@ const HomeUser = () => {
                   style={{ height: "200px", width: "100%" }}
                 >
 <TileLayer url="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-<Marker position={[latitude, longitude]}>
-                    <Popup>موقعك الحالي</Popup>
-                  </Marker>
+<Marker position={[latitude, longitude]} icon={locationIcon}>
+  <Popup>موقعك الحالي</Popup>
+</Marker>
                 </MapContainer>
                 <p className="location-coordinates">
                   خط العرض: {latitude.toFixed(6)}، خط الطول: {longitude.toFixed(6)}

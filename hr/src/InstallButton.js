@@ -5,16 +5,11 @@ const InstallButton = () => {
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
-    const handler = (e) => {
-      e.preventDefault(); // منع العرض الافتراضي
-      setDeferredPrompt(e);
-      setShowButton(true);
-    };
-
-    window.addEventListener("beforeinstallprompt", handler);
-
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    window.addEventListener("beforeinstallprompt", (e) => {
+      console.log("beforeinstallprompt fired");
+    });
   }, []);
+  
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -32,7 +27,7 @@ const InstallButton = () => {
   return (
     <>
       {showButton && (
-        <button className="btn btn-primary" onClick={handleInstallClick}>
+        <button className="btn btn-primary " onClick={handleInstallClick}>
           تثبيت التطبيق على الشاشة الرئيسية
         </button>
       )}

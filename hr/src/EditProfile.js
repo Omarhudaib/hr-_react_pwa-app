@@ -97,19 +97,7 @@ const UserProfile = () => {
         formDataToSend.append(key, formData[key] || ""); // Ensure all fields are sent
       });
   
-      const response = await api.post(
-        `/user/${user.id}`,
-        formDataToSend,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`, // Include the token
-          },
-        }
-      );
-  
-      setSuccessMessage("User data updated successfully!");
-      setError("");
+    
 
       // عرض تنبيه بنجاح التحديث
       Swal.fire({
@@ -225,7 +213,7 @@ const UserProfile = () => {
               <p><strong>نوع العمل:</strong> {userData.work_type}</p>
               <p><strong>الإجازات السنوية:</strong> {userData.annual_vacations_days} يوم</p>
               <p><strong>الإجازات المرضية:</strong> {userData.sick_days} يوم</p>
-              <p><strong>الراتب:</strong> {userData.salary} ريال</p>
+              <p><strong>الراتب:</strong> {userData.salary} دينار</p>
               <p><strong>الحضور من اي مكان :</strong> {userData.attendtaby ? "مفعل" : "غير مفعل"}</p>
               <p><strong>معلومات إضافية:</strong> {userData.additional_information}</p>
             </div>

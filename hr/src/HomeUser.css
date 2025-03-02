@@ -373,4 +373,46 @@ body, .mobile-app-container {
   .leaflet-marker-icon {
     z-index: 1000 !important;
   }
+  .status-indicator {
+    padding: 5px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+  
+  /* حالة مسجل دخول */
+  .checked-in {
+    background-color: #4CAF50; /* اللون الأخضر */
+    color: white;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.6); /* تأثير الإضاءة الخفيفة */
+    animation: glow 1.5s infinite ease-in-out; /* تأثير وميض الضوء */
+  }
+  
+  /* حالة مسجل خروج */
+  .checked-out {
+    background-color: #f44336; /* اللون الأحمر */
+    color: white;
+    box-shadow: 0 0 10px rgba(244, 67, 54, 0.6);
+  }
+  
+  /* حالة غير مسجل */
+  .غير مسجل {
+    background-color: #9E9E9E; /* اللون الرمادي */
+    color: white;
+  }
+  
+  /* تأثير وميض الضوء عند التواجد */
+  @keyframes glow {
+    0% {
+      box-shadow: 0 0 5px rgba(76, 175, 80, 0.6), 0 0 10px rgba(76, 175, 80, 0.6);
+    }
+    50% {
+      box-shadow: 0 0 15px rgba(76, 175, 80, 1), 0 0 20px rgba(76, 175, 80, 0.8);
+    }
+    100% {
+      box-shadow: 0 0 5px rgba(76, 175, 80, 0.6), 0 0 10px rgba(76, 175, 80, 0.6);
+    }
+  }
   
