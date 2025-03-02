@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "./api";
 import { useNavigate, Link } from "react-router-dom";
 import { FaHome, FaListAlt, FaFileAlt, FaClock } from "react-icons/fa";
 import "./HomeUser.css";
-
+import Spinner from "./Spinner"
 const MyRequests = () => {
   const [requests, setRequests] = useState([]);
   const [error, setError] = useState("");
@@ -19,10 +19,8 @@ const MyRequests = () => {
   const fetchRequests = async (userId) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("authToken");
-      const response = await axios.get(
-        `https://newhrsys-production.up.railway.app/api/user-Request/${userId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      const response = await api.get(
+        `/user-Request/${userId}`,
       );
       setRequests(response.data);
     } catch (err) {
@@ -48,7 +46,7 @@ const MyRequests = () => {
       </header>
 
       <main className="app-main-content">
-        {loading && <div className="app-alert info">جاري تحميل الطلبات...</div>}
+        {loading && <div className="app-alert info " style={{ padding:"25%" }}><Spinner/></div>}
         {error && <div className="app-alert error">{error}</div>}
 
         {!loading && requests.length === 0 && (

@@ -1,6 +1,5 @@
-import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import axios from 'axios';
-import { useEffect } from 'react';
 
 // Components
 import HomeUser from './HomeUser';
@@ -8,7 +7,7 @@ import EditProfile from './EditProfile';
 import MyRequest from './MyRequest';
 import UserLoginPage from './UserLoginPage';
 import LeaveRequest from './LeaveRequest';
-import ProfileSection from './ProfileSection';
+
 
 // Configure axios interceptors
 axios.interceptors.response.use(
@@ -65,11 +64,6 @@ function App() {
           </PrivateRoute>
         }/>
         
-        <Route path="/profile" element={
-          <PrivateRoute>
-            <ProfileSection />
-          </PrivateRoute>
-        }/>
 
         {/* Catch-all route */}
         <Route path="*" element={<Navigate to="/" replace />} />

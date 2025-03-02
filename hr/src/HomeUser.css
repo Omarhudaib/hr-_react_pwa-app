@@ -293,7 +293,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 200px;
+    height: 250px;
   }
   
   .app-alert {
@@ -311,3 +311,66 @@
     background-color: #f8d7da;
     color: #721c24;
   }
+  .app-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .form-card,
+  .data-card {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .profile-form {
+    display: grid;
+    gap: 10px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .user-data p {
+    margin: 5px 0;
+  }
+  /* توجيه النص بالكامل من اليمين إلى اليسار */
+body, .mobile-app-container {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  /* تأكد أن النص داخل البطاقات متناسق */
+  .app-card {
+    text-align: right;
+  }
+  
+  /* تأكد أن التنقل السفلي متناسق */
+  .bottom-nav {
+    direction: rtl;
+    text-align: center;
+  }
+  
+  /* تصحيح اتجاه الأيقونات لتكون قبل النص */
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .card-header .card-icon {
+    margin-left: 10px; /* بدلاً من margin-right */
+  }
+  
+  /* تأكيد أن قائمة الروابط بالأسفل مرتبة */
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .leaflet-marker-icon {
+    z-index: 1000 !important;
+  }
+  

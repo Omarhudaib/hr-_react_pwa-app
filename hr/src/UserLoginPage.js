@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import img from "./Userspages/logo512.png"
 
 const UserLoginPage = () => {
     const [formData, setFormData] = useState({ user_code: '', password: ''});
@@ -30,44 +30,44 @@ const UserLoginPage = () => {
     };
 
     return (
-
-          
-                <div className="p-4 shadow card mt-5" style={{ maxWidth: '100%', width: '100%', height: '100%' }}>
-                    <h2 className="mb-4 text-center">User Login</h2>
-                    {error && <div className="alert alert-danger">{error}</div>}
-                    <form onSubmit={handleSubmit}>
-                 
-                        <div className="mb-3 form-group">
-                            <label htmlFor="user_code">User Code</label>
-                            <input
-                                type="text"
-                                id="user_code"
-                                name="user_code"
-                                className="form-control"
-                                placeholder="Enter your user code"
-                                value={formData.user_code}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className="mb-3 form-group">
-                            <label htmlFor="password">Password</label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                className="form-control"
-                                placeholder="Enter your password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <button type="submit" className="btn btn-primary w-100">Login</button>
-                    </form>
-          
+        <div className="d-flex justify-content-center align-items-center min-vh-100 ">
+            <div className="p-4 shadow card w-95" style={{ maxWidth: '500px' }}>
+                <div className="text-center mb-4">
+                    <img src={img} alt="Logo" style={{ maxWidth: '150px' }} />
+                </div>
+                <h2 className="mb-4 text-center">User Login</h2>
+                {error && <div className="alert alert-danger">{error}</div>}
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-3 form-group">
+                        <label htmlFor="user_code">User Code</label>
+                        <input
+                            type="text"
+                            id="user_code"
+                            name="user_code"
+                            className="form-control"
+                            placeholder="Enter your user code"
+                            value={formData.user_code}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div className="mb-3 form-group">
+                        <label htmlFor="password">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            className="form-control"
+                            placeholder="Enter your password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <button type="submit" className="btn btn-primary w-100">Login</button>
+                </form>
             </div>
- 
+        </div>
     );
 };
 

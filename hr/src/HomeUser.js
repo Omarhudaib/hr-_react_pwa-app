@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "./api";
 import InstallButton from "./InstallButton";
 import { FaHome, FaUserEdit, FaListAlt, FaSignInAlt, FaSignOutAlt, FaMapMarkerAlt, FaFileAlt } from "react-icons/fa";
 import "./HomeUser.css";
@@ -7,6 +7,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import Spinner from "./Spinner"; // A simple loading spinner component
+import Swal from "sweetalert2";
 
 const HomeUser = () => {
   const [loading, setLoading] = useState(false);
@@ -32,8 +33,8 @@ const HomeUser = () => {
   const fetchCheckStatus = async (userId) => {
     try {
       const token = localStorage.getItem("authToken");
-      const response = await axios.get(
-        `https://newhrsys-production.up.railway.app/api/user-checkStatus/${userId}`,
+      const response = await api.get(
+        `/user-checkStatus/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCheckStatus(response.data.status);
@@ -62,92 +63,113 @@ const HomeUser = () => {
       setIsFetchingLocation(false);
     }
   };
-
-  const handleManualLocation = () => {
-    const manualLatitude = prompt("أدخل خط العرض:");
-    const manualLongitude = prompt("أدخل خط الطول:");
-
-    if (manualLatitude && manualLongitude) {
-      setLatitude(parseFloat(manualLatitude));
-      setLongitude(parseFloat(manualLongitude));
-      setError("");
-    } else {
-      setError("يرجى إدخال قيم صحيحة لخط العرض وخط الطول.");
-    }
-  };
-
   const handleCheckIn = async () => {
-    if (!user) return setError("بيانات المستخدم غير موجودة.");
-    if (!latitude || !longitude) return setError("يرجى إدخال الموقع.");
-
     setLoading(true);
     try {
       const token = localStorage.getItem("authToken");
-      await axios.post(
-        `https://newhrsys-production.up.railway.app/api/user-checkIn/${user.id}`,
-        {
-          user_id: user.id,
-          company_id: user.company_id,
-          latitude_in: latitude,
-          longitude_in: longitude,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setSuccess("تم تسجيل الدخول بنجاح!");
+      const response = await api.post(`/user-checkIn/${user.id}`, {
+        user_id: user.id,
+        company_id: user.company_id,
+        latitude_in: latitude,
+        longitude_in: longitude,
+      }, { headers: { Authorization: `Bearer ${token}` } });
+  
+      Swal.fire("تم بنجاح", "تم تسجيل الدخول بنجاح!", "success");
       setCheckStatus("Checked In");
     } catch (err) {
-      setError("فشل تسجيل الدخول.");
+      let errorMessage = "فشل تسجيل الدخول.";
+      if (err.response) {
+        const { error, distance_difference } = err.response.data;
+        switch (error) {
+          case "Invalid location format":
+            errorMessage = "تنسيق الموقع غير صالح. يرجى التأكد من تشغيل GPS وإعادة المحاولة.";
+            break;
+          case "Location too far":
+            errorMessage = `أنت بعيد عن موقع القسم بمسافة ${(distance_difference * 1000).toFixed(2)} متر. يرجى الاقتراب أكثر.`;
+            break;
+          case "You have already checked in today without checking out":
+            errorMessage = "لقد قمت بتسجيل الدخول بالفعل اليوم بدون تسجيل الخروج.";
+            break;
+          case "User not found":
+            errorMessage = "المستخدم غير موجود.";
+            break;
+          default:
+            errorMessage = error || "حدث خطأ غير معروف.";
+        }
+      }
+      Swal.fire("خطأ", errorMessage, "error");
     } finally {
       setLoading(false);
     }
   };
-
+  
   const handleCheckOut = async () => {
-    if (!user) return setError("بيانات المستخدم غير موجودة.");
-    if (!latitude || !longitude) return setError("يرجى إدخال الموقع.");
-
     setLoading(true);
     try {
       const token = localStorage.getItem("authToken");
-      await axios.post(
-        `https://newhrsys-production.up.railway.app/api/user-checkOut/${user.id}`,
-        {
-          user_id: user.id,
-          company_id: user.company_id,
-          latitude_out: latitude,
-          longitude_out: longitude,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setSuccess("تم تسجيل الخروج بنجاح!");
+      const response = await api.post(`/user-checkOut/${user.id}`, {
+        user_id: user.id,
+        company_id: user.company_id,
+        latitude_out: latitude,
+        longitude_out: longitude,
+      }, { headers: { Authorization: `Bearer ${token}` } });
+  
+      Swal.fire("تم بنجاح", "تم تسجيل الخروج بنجاح!", "success");
       setCheckStatus("Checked Out");
     } catch (err) {
-      setError("فشل تسجيل الخروج.");
+      let errorMessage = "فشل تسجيل الخروج.";
+      if (err.response) {
+        const { error, distance_difference } = err.response.data;
+        switch (error) {
+          case "Invalid location format":
+            errorMessage = "تنسيق الموقع غير صالح. يرجى التأكد من تشغيل GPS وإعادة المحاولة.";
+            break;
+          case "Location too far":
+            errorMessage = `أنت بعيد عن موقع القسم بمسافة ${(distance_difference * 1000).toFixed(2)} متر. يرجى الاقتراب أكثر.`;
+            break;
+          case "No check-in record found":
+            errorMessage = "لم يتم العثور على سجل تسجيل الدخول. يرجى تسجيل الدخول أولاً.";
+            break;
+          case "You have already checked out":
+            errorMessage = "لقد قمت بالفعل بتسجيل الخروج.";
+            break;
+          case "User not found":
+            errorMessage = "المستخدم غير موجود.";
+            break;
+          default:
+            errorMessage = error || "حدث خطأ غير معروف.";
+        }
+      }
+      Swal.fire("خطأ", errorMessage, "error");
     } finally {
       setLoading(false);
     }
   };
-
+  
+  
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem("authToken");
-      await axios.post(
-        "https://newhrsys-production.up.railway.app/api/logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await api.post("/logout", {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
     } catch (err) {
       console.error("Logout error:", err);
     } finally {
       localStorage.clear();
-      navigate("/");
+      Swal.fire({
+        title: "تم تسجيل الخروج",
+        text: "تم تسجيل خروجك بنجاح!",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      }).then(() => navigate("/"));
     }
   };
+  
 
   return (
     <div className="mobile-app-container">
@@ -180,11 +202,11 @@ const HomeUser = () => {
               <>
                 <MapContainer
                   center={[latitude, longitude]}
-              
+              zoom={13}
                   style={{ height: "200px", width: "100%" }}
                 >
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <Marker position={[latitude, longitude]}>
+<TileLayer url="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+<Marker position={[latitude, longitude]}>
                     <Popup>موقعك الحالي</Popup>
                   </Marker>
                 </MapContainer>

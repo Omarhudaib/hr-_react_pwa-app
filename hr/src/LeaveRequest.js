@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { FaFileAlt } from "react-icons/fa";
-import axios from "axios";
+import api from "./api";
 import { useNavigate, Link } from "react-router-dom";
 import "./HomeUser.css";
 import { FaHome,  FaListAlt} from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const LeaveRequest = () => {
   const [requestType, setRequestType] = useState("");
@@ -28,8 +29,8 @@ const LeaveRequest = () => {
   const fetchLeaveTypes = async (companyId) => {
     try {
       const token = localStorage.getItem("authToken");
-      const response = await axios.get(
-        `https://newhrsys-production.up.railway.app/api/leave-types/${companyId}`,
+      const response = await api.get(
+        `/leave-types/${companyId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setLeaveTypes(response.data);
@@ -37,14 +38,18 @@ const LeaveRequest = () => {
       setError("فشل في جلب أنواع الإجازات.");
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!requestType || !startDate || !endDate) {
       setError("يرجى ملء جميع الحقول المطلوبة.");
+      Swal.fire({
+        icon: 'error',
+        title: 'خطأ',
+        text: 'يرجى ملء جميع الحقول المطلوبة.',
+      });
       return;
     }
-
+  
     setLoading(true);
     const formData = new FormData();
     formData.append("user_id", user.id);
@@ -53,15 +58,20 @@ const LeaveRequest = () => {
     formData.append("end_date", endDate);
     formData.append("reason", description);
     if (image) formData.append("image_path", image);
-
+  
     try {
       const token = localStorage.getItem("authToken");
-      await axios.post(
-        `https://newhrsys-production.up.railway.app/api/user-submitRequest/${user.id}`,
+      await api.post(
+        `/user-submitRequest/${user.id}`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setSuccess("تم تقديم الطلب بنجاح!");
+      Swal.fire({
+        icon: 'success',
+        title: 'تم!',
+        text: 'تم تقديم الطلب بنجاح.',
+      });
       setRequestType("");
       setDescription("");
       setStartDate("");
@@ -70,11 +80,16 @@ const LeaveRequest = () => {
       setError("");
     } catch (err) {
       setError("فشل تقديم الطلب.");
+      Swal.fire({
+        icon: 'error',
+        title: 'خطأ',
+        text: 'فشل تقديم الطلب.',
+      });
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="mobile-app-container">
       <header className="app-header">
