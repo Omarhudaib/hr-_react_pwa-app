@@ -1,170 +1,188 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
-import { FaHome, FaUserEdit, FaSave } from "react-icons/fa";
-import "./HomeUser.css";
+import {Link, useNavigate } from "react-router-dom";
+import { FaUserEdit, FaSave, FaFileImage } from "react-icons/fa";
 
-const EditProfile = () => {
+const UserProfile = () => {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     first_name: "",
-    last_name: "",
     second_name: "",
     middle_name: "",
-    password: "",
+    last_name: "",
     national_id: "",
     marital_status: "",
+    password: "",
+    password_confirmation: "",
     image: null,
   });
-
-  const [preview, setPreview] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const navigate = useNavigate();
-  const userData = JSON.parse(localStorage.getItem("user")); // Get full user object
-  const userId = userData ? userData.id : null;
-  useEffect(() => {
-    if (!userId) {
-      navigate("/login");
-      return;
-    }
+  const [successMessage, setSuccessMessage] = useState("");
 
+  useEffect(() => {
     const fetchUserData = async () => {
       try {
+        const user = JSON.parse(localStorage.getItem("user"));
         const token = localStorage.getItem("authToken");
-        const response = await axios.get(`https://newhrsys-production.up.railway.app/api/user-get/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
 
-        const userData = response.data.user;
-        setFormData({
-          first_name: userData.first_name || "",
-          last_name: userData.last_name || "",
-          second_name: userData.second_name || "",
-          middle_name: userData.middle_name || "",
-          national_id: userData.national_id || "",
-          marital_status: userData.marital_status || "",
-        });
-
-        if (userData.image_path) {
-          setPreview(`https://newhrsys-production.up.railway.app/storage/${userData.image_path}`);
+        if (!user?.id || !token) {
+          setError("Authentication required");
+          navigate('/login');
+          return;
         }
-      } catch (error) {
-        setError("Failed to load user data.");
+
+        const response = await axios.get(
+          `https://newhrsys-production.up.railway.app/api/user-get/${user.id}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        setUserData(response.data);
+        setFormData({
+          first_name: response.data.first_name || "",
+          second_name: response.data.second_name || "",
+          middle_name: response.data.middle_name || "",
+          last_name: response.data.last_name || "",
+          national_id: response.data.national_id || "",
+          marital_status: response.data.marital_status || "",
+          password: "",
+          password_confirmation: "",
+          image: null,
+        });
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        setError(err.response?.data?.error || "Failed to fetch user data.");
+        if (err.response?.status === 401) navigate('/login');
       }
     };
 
     fetchUserData();
-  }, [userId, navigate]);
+  }, [navigate]);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, image: file });
-      setPreview(URL.createObjectURL(file));
+
+
+
+  // Handle form input changes
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+
+    if (name === "image") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: files[0],
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
     }
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-    setSuccess("");
-
+  
     try {
-      const formDataToSend = new FormData();
-      for (const key in formData) {
-        if (formData[key]) formDataToSend.append(key, formData[key]);
-      }
-
+      const user = JSON.parse(localStorage.getItem("user"));
       const token = localStorage.getItem("authToken");
-      const response = await axios.post(
-        `https://newhrsys-production.up.railway.app/api/user/${userId}`,
-        formDataToSend,
-        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
-      );
-
-      if (response.data.message) {
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        setSuccess("Profile updated successfully!");
-        setTimeout(() => navigate("/profile"), 2000);
+  
+      if (!user?.id || !token) {
+        setError("Authentication required");
+        navigate('/login');
+        return;
       }
+  
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach((key) => {
+        formDataToSend.append(key, formData[key] || ""); // Ensure all fields are sent
+      });
+  
+      const response = await axios.post(
+        `https://newhrsys-production.up.railway.app/api/user/${user.id}`,
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`, // Include the token
+          },
+        }
+      );
+  
+      setSuccessMessage("User data updated successfully!");
+      setError("");
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to update profile");
-    } finally {
-      setLoading(false);
+      console.error("Error updating user data:", err);
+      setError(err.response?.data?.message || "Failed to update user data.");
+      setSuccessMessage("");
     }
   };
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="mobile-app-container">
-      <header className="app-header">
-        <h1 className="app-title">Edit Profile</h1>
-      </header>
-      <main className="app-main-content">
-        {error && <div className="app-alert error">{error}</div>}
-        {success && <div className="app-alert success">{success}</div>}
-        <div className="app-card">
-          <div className="card-body">
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Profile Picture</label>
-                <div className="image-upload">
-                  <img src={preview || "/default-avatar.png"} alt="Profile" className="profile-preview" />
-                  <label className="app-btn secondary">
-                    Choose Image
-                    <input type="file" accept="image/*" onChange={handleImageChange} hidden />
-                  </label>
-                </div>
-              </div>
-              <div className="form-group">
-                <label>First Name</label>
-                <input type="text" value={formData.first_name} onChange={(e) => setFormData({ ...formData, first_name: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Last Name</label>
-                <input type="text" value={formData.last_name} onChange={(e) => setFormData({ ...formData, last_name: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Second Name</label>
-                <input type="text" value={formData.second_name} onChange={(e) => setFormData({ ...formData, second_name: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Middle Name</label>
-                <input type="text" value={formData.middle_name} onChange={(e) => setFormData({ ...formData, middle_name: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>National ID</label>
-                <input type="text" value={formData.national_id} onChange={(e) => setFormData({ ...formData, national_id: e.target.value })} />
-              </div>
-              <div className="form-group">
-                <label>Marital Status</label>
-                <select value={formData.marital_status} onChange={(e) => setFormData({ ...formData, marital_status: e.target.value })}>
-                  <option value="">Select</option>
-                  <option value="single">Single</option>
-                  <option value="married">Married</option>
-                  <option value="divorced">Divorced</option>
-                </select>
-              </div>
-              <button type="submit" className="app-btn success" disabled={loading}>
-                <FaSave /> {loading ? "Saving..." : "Save Changes"}
-              </button>
-            </form>
-          </div>
+    <header className="app-header">
+      <h1 className="app-title">مرحباً، {formData.first_name}</h1>
+    </header>
+
+    <main className="app-main-content">
+      {successMessage && <div className="app-alert success">{successMessage}</div>}
+      {error && <div className="app-alert error">{error}</div>}
+
+      <div className="app-card">
+        <div className="card-header">
+          <FaUserEdit className="card-icon" />
+          <h3>تحديث الملف الشخصي</h3>
         </div>
-      </main>
-      <nav className="bottom-nav">
-        <Link to="/home" className="nav-item">
-          <FaHome />
-          <span>Home</span>
-        </Link>
-        <Link to="/profile" className="nav-item">
-          <FaUserEdit />
-          <span>Profile</span>
-        </Link>
-      </nav>
-    </div>
+        <div className="card-body">
+          <form onSubmit={handleSubmit}>
+            <label>الاسم الأول:</label>
+            <input type="text" name="first_name" value={formData.first_name || ""} onChange={handleChange} />
+            
+            <label>اسم الأب:</label>
+            <input type="text" name="middle_name" value={formData.middle_name || ""} onChange={handleChange} />
+            
+            <label>اسم العائلة:</label>
+            <input type="text" name="last_name" value={formData.last_name || ""} onChange={handleChange} />
+            
+            <label>الحالة الاجتماعية:</label>
+            <select name="marital_status" value={formData.marital_status || ""} onChange={handleChange}>
+              <option value="">اختر</option>
+              <option value="single">أعزب</option>
+              <option value="married">متزوج</option>
+              <option value="divorced">مطلق</option>
+            </select>
+            
+            <label>صورة الملف الشخصي:</label>
+            <input type="file" name="image" onChange={handleChange} />
+            
+            <button type="submit" className="app-btn success">
+              <FaSave /> حفظ التغييرات
+            </button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <nav className="bottom-nav">
+      <Link to="/home" className="nav-item">
+        <FaUserEdit />
+        <span>الرئيسية</span>
+      </Link>
+      <Link to="/edit-profile" className="nav-item">
+        <FaUserEdit />
+        <span>تعديل الملف</span>
+      </Link>
+      <Link to="/my-requests" className="nav-item">
+        <FaFileImage />
+        <span>طلباتي</span>
+      </Link>
+    </nav>
+  </div>
   );
 };
 
-export default EditProfile;
+export default UserProfile;

@@ -1,87 +1,217 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import api from "./api";
+import { useNavigate } from "react-router-dom";
 
-const ProfileSection = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // حالة جديدة للتحكم في عرض مؤشر التحميل
+const UserProfile = () => {
+  const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
+  const [formData, setFormData] = useState({
+    first_name: "",
+    second_name: "",
+    middle_name: "",
+    last_name: "",
+    national_id: "",
+    marital_status: "",
+    password: "",
+    password_confirmation: "",
+    image: null,
+  });
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
+
+
+ 
+  // Fetch user data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
 
-        const token = localStorage.getItem('authToken');
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-
-        if (!storedUser || !storedUser.id) {
-          setError('User data not found.');
-          setLoading(true);
-      
+const user = JSON.parse(localStorage.getItem("user"));
+const userId = user?.id;
+        const token = localStorage.getItem("authToken");
+  
+        console.log("User ID:", userId);
+        console.log("Token:", token);
+  
+        if (!userId || !token) {
+          setError("User ID or token not found.");
           return;
         }
-
-        const response = await axios.get(
-          `https://newhrsys-production.up.railway.app/api/user-get/${storedUser.id}`,
+  
+        const response = await api.post(
+          `/user-get/${userId}`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-
-        setUser(response.data.user);
+  
+        setUserData(response.data.user);
+        setFormData({
+          first_name: response.data.user.first_name || "",
+          second_name: response.data.user.second_name || "",
+          middle_name: response.data.user.middle_name || "",
+          last_name: response.data.user.last_name || "",
+          national_id: response.data.user.national_id || "",
+          marital_status: response.data.user.marital_status || "",
+          password: "",
+          password_confirmation: "",
+          image: null,
+        });
       } catch (err) {
-        setError('Failed to load user data.');
-      } finally {
-        setLoading(false);
-        setIsLoading(false); // إيقاف حالة التحميل
+        console.error("Error fetching user data:", err);
+        setError("Failed to fetch user data.");
       }
     };
-
+  
     fetchUserData();
-  }, [location.key]); // Re-fetch when location key changes
+  }, []);
 
+  // Handle form input changes
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+
+    if (name === "image") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: files[0],
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const userId = JSON.parse(localStorage.getItem("user")).id;
+      const token = localStorage.getItem("authToken");
+
+      const formDataToSend = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (formData[key]) {
+          formDataToSend.append(key, formData[key]);
+        }
+      });
+
+      const response = await api.post(
+        `/user/${userId}`,
+        formDataToSend,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setSuccessMessage("User data updated successfully!");
+      setError("");
+    } catch (err) {
+      setError("Failed to update user data.");
+      setSuccessMessage("");
+    }
+  };
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="card dashboard-card">
-      <div className="card-header">Profile Overview</div>
-      <div className="card-body">
-        <div className="d-flex align-items-center mb-3">
-          
-           {/* Corrected image source with proper URL concatenation */}
-<img
-  src={user?.image_path 
-    ? `https://newhrsys-production.up.railway.app/storage/${user.image_path}`
-    : '/user.png'
-  }
-  className="rounded-circle me-3"
-  alt="Profile"
-  style={{ width: '80px', height: '80px' }}
-/>
-          
-          <div>
-            <h4>{user ? `${user.first_name} ${user.last_name}` : 'Loading...'}</h4>
-            <p className="text-muted mb-0">{user?.role?.name || 'No Role'}</p>
-          </div>
+    <div style={{ padding: "20px" }}>
+      <h2>User Profile</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: "15px" }}>
+          <label>First Name:</label>
+          <input
+            type="text"
+            name="first_name"
+            value={formData.first_name}
+            onChange={handleChange}
+          />
         </div>
-        <div className="row">
-          <div className="col-md-6">
-            <p><strong>Employee ID:</strong> {user?.user_code || 'Loading...'}</p>
-            <p><strong>Department:</strong> {user?.department?.dep_name || 'No Department'}</p>
-          </div>
-          <div className="col-md-6">
-            <p><strong>user_code :</strong> {user?.user_code || 'Loading...'}</p>
-  
-          </div>
+        <div style={{ marginBottom: "15px" }}>
+          <label>Second Name:</label>
+          <input
+            type="text"
+            name="second_name"
+            value={formData.second_name}
+            onChange={handleChange}
+          />
         </div>
-        <Link to="/edit-profile" className="btn btn-dark w-100">
-          Edit Profile
-        </Link>
-      </div>
+        <div style={{ marginBottom: "15px" }}>
+          <label>Middle Name:</label>
+          <input
+            type="text"
+            name="middle_name"
+            value={formData.middle_name}
+            onChange={handleChange}
+          />
+        </div>
+        <div style={{ marginBottom: "15px" }}>
+          <label>Last Name:</label>
+          <input
+            type="text"
+            name="last_name"
+            value={formData.last_name}
+            onChange={handleChange}
+          />
+        </div>
+        <div style={{ marginBottom: "15px" }}>
+          <label>National ID:</label>
+          <input
+            type="text"
+            name="national_id"
+            value={formData.national_id}
+            onChange={handleChange}
+          />
+        </div>
+        <div style={{ marginBottom: "15px" }}>
+          <label>Marital Status:</label>
+          <select
+            name="marital_status"
+            value={formData.marital_status}
+            onChange={handleChange}
+          >
+            <option value="">Select</option>
+            <option value="single">Single</option>
+            <option value="married">Married</option>
+            <option value="divorced">Divorced</option>
+          </select>
+        </div>
+        <div style={{ marginBottom: "15px" }}>
+          <label>Password:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </div>
+        <div style={{ marginBottom: "15px" }}>
+          <label>Confirm Password:</label>
+          <input
+            type="password"
+            name="password_confirmation"
+            value={formData.password_confirmation}
+            onChange={handleChange}
+          />
+        </div>
+        <div style={{ marginBottom: "15px" }}>
+          <label>Profile Image:</label>
+          <input type="file" name="image" onChange={handleChange} />
+        </div>
+        <button type="submit">Update Profile</button>
+      </form>
     </div>
   );
 };
 
-export default ProfileSection;
+export default UserProfile;
