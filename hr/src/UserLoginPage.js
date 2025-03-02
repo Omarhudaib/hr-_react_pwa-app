@@ -33,50 +33,50 @@ const UserLoginPage = () => {
             // إعادة التوجيه للصفحة الرئيسية
             navigate('/home');
         } catch (err) {
-            setError('Invalid credentials. Please try again.');
+            setError('بيانات الدخول غير صحيحة. حاول مرة أخرى.');
         }
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center min-vh-100" style={{ backgroundColor: "#f0f0f0" }}>
-            <div className="p-4 shadow card w-100" style={{ maxWidth: '400px', borderRadius: '10px' }}>
-                <div className="text-center mb-4">
-                    <InstallButton />
-                    <img src={img} alt="Logo" style={{ maxWidth: '120px' }} />
-                </div>
-                <h2 className="mb-4 text-center">User Login</h2>
-                {error && <div className="alert alert-danger">{error}</div>}
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-3 form-group">
-                        <label htmlFor="user_code">User Code</label>
-                        <input
-                            type="text"
-                            id="user_code"
-                            name="user_code"
-                            className="form-control"
-                            placeholder="Enter your user code"
-                            value={formData.user_code}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="mb-3 form-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            className="form-control"
-                            placeholder="Enter your password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="btn btn-dark w-100">Login</button>
-                </form>
+        <div className="d-flex justify-content-center align-items-center min-vh-100" style={{ backgroundColor: "#f0f0f0", height: "100vh" }}>
+        <div className="p-4 shadow card w-100" style={{ maxWidth: '400px', borderRadius: '10px', height: 'auto' }}>
+            <div className="text-center mb-4">
+                <InstallButton />
+                <img src={img} alt="Logo" style={{ maxWidth: '170px' }} />
             </div>
+            <h2 className="mb-4 text-center" style={{ fontFamily: 'Tajawal, sans-serif' }}>تسجيل الدخول</h2>
+            {error && <div className="alert alert-danger">{error}</div>}
+            <form onSubmit={handleSubmit}>
+                <div className="mb-3 form-group">
+                    <label htmlFor="user_code">رمز المستخدم</label>
+                    <input
+                        type="text"
+                        id="user_code"
+                        name="user_code"
+                        className="form-control"
+                        placeholder="أدخل رمز المستخدم"
+                        value={formData.user_code}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <div className="mb-3 form-group">
+                    <label htmlFor="password">كلمة المرور</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        className="form-control"
+                        placeholder="أدخل كلمة المرور"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
+                <button type="submit" className="btn btn-dark w-100">دخول</button>
+            </form>
         </div>
+    </div>
     );
 };
 
