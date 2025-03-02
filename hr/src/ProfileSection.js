@@ -11,7 +11,7 @@ const ProfileSection = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-// تفعيل حالة التحميل عند بدء جلب البيانات
+
         const token = localStorage.getItem('authToken');
         const storedUser = JSON.parse(localStorage.getItem('user'));
 
@@ -41,20 +41,8 @@ const ProfileSection = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [location.key]); // Re-fetch when location key changes
 
-  if (isLoading) {
-    return (
-      <div className="d-flex justify-content-center">
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-danger">{error}</p>;
 
   return (
     <div className="card dashboard-card">
