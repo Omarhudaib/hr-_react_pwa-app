@@ -24,7 +24,7 @@ const HomeUser = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [success] = useState("");
   const [checkStatus, setCheckStatus] = useState(null);
   const [latitude, setLatitude] = useState(0); // Default latitude
   const [longitude, setLongitude] = useState(0); // Default longitude
@@ -39,6 +39,7 @@ const HomeUser = () => {
     } else {
       navigate("/login");
     }
+    getLocation();
   }, [navigate]);
 
   const fetchCheckStatus = async (userId) => {
@@ -212,10 +213,7 @@ const HomeUser = () => {
         {success && <div className="app-alert success">{success}</div>}
         {error && <div className="app-alert error">{error}</div>}
   
-  <div className={`status-indicator ${checkStatus === "مسجل دخول" ? "checked-in" : checkStatus === "مسجل خروج" ? "checked-out" : "غير مسجل"}`}>
-    <p>الحالة الحالية: <strong>{checkStatus || "غير معروف"}</strong></p>
-  </div>
-  
+
 
 
 

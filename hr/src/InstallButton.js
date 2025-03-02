@@ -5,21 +5,39 @@ const InstallButton = () => {
   const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
-    window.addEventListener("beforeinstallprompt", (e) => {
+    const handleBeforeInstallPrompt = (e) => {
       console.log("beforeinstallprompt fired");
-    });
+      // Prevent the default browser install prompt
+      e.preventDefault();
+      // Save the event so it can be triggered later
+      setDeferredPrompt(e);
+      // Show the install button
+      setShowButton(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    };
   }, []);
-  
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
+
+    // Show the browser's install prompt
     deferredPrompt.prompt();
+
+    // Wait for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
+
     if (outcome === "accepted") {
       console.log("تم قبول تثبيت التطبيق");
     } else {
       console.log("تم رفض تثبيت التطبيق");
     }
+
+    // Reset the deferred prompt variable
     setDeferredPrompt(null);
     setShowButton(false);
   };
@@ -27,7 +45,7 @@ const InstallButton = () => {
   return (
     <>
       {showButton && (
-        <button className="btn btn-primary " onClick={handleInstallClick}>
+        <button className="btn btn-primary mb-3" onClick={handleInstallClick}>
           تثبيت التطبيق على الشاشة الرئيسية
         </button>
       )}
