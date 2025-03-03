@@ -10,7 +10,6 @@ import Spinner from "./Spinner"; // A simple loading spinner component
 import Swal from "sweetalert2";
 import L from "leaflet";
 
-
 const locationIcon = new L.Icon({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
   iconSize: [25, 41],
@@ -49,9 +48,9 @@ const HomeUser = () => {
         `/user-checkStatus/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-  
+
       const { isCheckedIn, isCheckedOut } = response.data;
-  
+
       // تعديل الحالة لتكون باللغة العربية
       if (isCheckedIn) {
         setCheckStatus("مسجل دخول");
@@ -65,9 +64,6 @@ const HomeUser = () => {
       setError("فشل في جلب حالة الدخول.");
     }
   };
-  
-
-  
 
   const getLocation = () => {
     setIsFetchingLocation(true);
@@ -89,9 +85,18 @@ const HomeUser = () => {
       setIsFetchingLocation(false);
     }
   };
+
   const handleCheckIn = async () => {
     setLoading(true);
     try {
+      // Ensure location is fetched before proceeding
+      if (!latitude || !longitude) {
+        await getLocation();
+        if (!latitude || !longitude) {
+          throw new Error("فشل في الحصول على الموقع. يرجى المحاولة مرة أخرى.");
+        }
+      }
+
       const token = localStorage.getItem("authToken");
       const response = await api.post(`/user-checkIn/${user.id}`, {
         user_id: user.id,
@@ -99,9 +104,9 @@ const HomeUser = () => {
         latitude_in: latitude,
         longitude_in: longitude,
       }, { headers: { Authorization: `Bearer ${token}` } });
-  
+
       Swal.fire("تم بنجاح", "تم تسجيل الدخول بنجاح!", "success");
-      setCheckStatus("Checked In");
+      setCheckStatus("مسجل دخول");
     } catch (err) {
       let errorMessage = "فشل تسجيل الدخول.";
       if (err.response) {
@@ -122,16 +127,26 @@ const HomeUser = () => {
           default:
             errorMessage = error || "حدث خطأ غير معروف.";
         }
+      } else if (err.message) {
+        errorMessage = err.message;
       }
       Swal.fire("خطأ", errorMessage, "error");
     } finally {
       setLoading(false);
     }
   };
-  
+
   const handleCheckOut = async () => {
     setLoading(true);
     try {
+      // Ensure location is fetched before proceeding
+      if (!latitude || !longitude) {
+        await getLocation();
+        if (!latitude || !longitude) {
+          throw new Error("فشل في الحصول على الموقع. يرجى المحاولة مرة أخرى.");
+        }
+      }
+
       const token = localStorage.getItem("authToken");
       const response = await api.post(`/user-checkOut/${user.id}`, {
         user_id: user.id,
@@ -139,9 +154,9 @@ const HomeUser = () => {
         latitude_out: latitude,
         longitude_out: longitude,
       }, { headers: { Authorization: `Bearer ${token}` } });
-  
+
       Swal.fire("تم بنجاح", "تم تسجيل الخروج بنجاح!", "success");
-      setCheckStatus("Checked Out");
+      setCheckStatus("مسجل خروج");
     } catch (err) {
       let errorMessage = "فشل تسجيل الخروج.";
       if (err.response) {
@@ -165,14 +180,15 @@ const HomeUser = () => {
           default:
             errorMessage = error || "حدث خطأ غير معروف.";
         }
+      } else if (err.message) {
+        errorMessage = err.message;
       }
       Swal.fire("خطأ", errorMessage, "error");
     } finally {
       setLoading(false);
     }
   };
-  
-  
+
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem("authToken");
@@ -195,7 +211,6 @@ const HomeUser = () => {
       }).then(() => navigate("/"));
     }
   };
-  
 
   return (
     <div className="mobile-app-container">
@@ -212,11 +227,6 @@ const HomeUser = () => {
       <main className="app-main-content">
         {success && <div className="app-alert success">{success}</div>}
         {error && <div className="app-alert error">{error}</div>}
-  
-
-
-
-
 
         <div className="app-card">
           <div className="card-header">
@@ -233,13 +243,13 @@ const HomeUser = () => {
               <>
                 <MapContainer
                   center={[latitude, longitude]}
-              zoom={13}
+                  zoom={13}
                   style={{ height: "200px", width: "100%" }}
                 >
-<TileLayer url="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-<Marker position={[latitude, longitude]} icon={locationIcon}>
-  <Popup>موقعك الحالي</Popup>
-</Marker>
+                  <TileLayer url="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <Marker position={[latitude, longitude]} icon={locationIcon}>
+                    <Popup>موقعك الحالي</Popup>
+                  </Marker>
                 </MapContainer>
                 <p className="location-coordinates">
                   خط العرض: {latitude.toFixed(6)}، خط الطول: {longitude.toFixed(6)}
@@ -266,14 +276,14 @@ const HomeUser = () => {
               <button
                 className="app-btn success"
                 onClick={handleCheckIn}
-                disabled={loading || checkStatus === "Checked In"}
+                disabled={loading || checkStatus === "مسجل دخول"}
               >
                 {loading ? <Spinner /> : <FaSignInAlt />} تسجيل الدخول
               </button>
               <button
                 className="app-btn warning"
                 onClick={handleCheckOut}
-                disabled={loading || checkStatus === "Checked Out"}
+                disabled={loading || checkStatus === "مسجل خروج"}
               >
                 {loading ? <Spinner /> : <FaSignOutAlt />} تسجيل الخروج
               </button>
