@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import api from "./api";
-import InstallButton from "./InstallButton";
-import { FaHome, FaUserEdit, FaListAlt, FaSignInAlt, FaSignOutAlt, FaMapMarkerAlt, FaFileAlt } from "react-icons/fa";
-import "./HomeUser.css";
-import { useNavigate, Link } from "react-router-dom";
+import api from "../main/api";
+import Sidebar from "../components/Sidebar";
+
+import { FaSignInAlt, FaSignOutAlt, FaMapMarkerAlt } from "react-icons/fa";
+import "../css/HomeUser.css";
+import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import Spinner from "./Spinner"; // A simple loading spinner component
+import Spinner from "../components/Spinner"; // A simple loading spinner component
 import Swal from "sweetalert2";
 import L from "leaflet";
 
@@ -189,40 +190,11 @@ const HomeUser = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("authToken");
-      await api.post("/logout", {}, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-    } catch (err) {
-      console.error("Logout error:", err);
-    } finally {
-      localStorage.clear();
-      Swal.fire({
-        title: "تم تسجيل الخروج",
-        text: "تم تسجيل خروجك بنجاح!",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-      }).then(() => navigate("/"));
-    }
-  };
-
+  
   return (
     <div className="mobile-app-container">
-      <header className="app-header">
-        <h1 className="app-title">مرحباً، {user?.first_name} {user?.last_name}</h1>
-        <div className="header-controls">
-          <InstallButton />
-          <button className="app-btn icon-btn" onClick={handleLogout} title="تسجيل الخروج">
-            <FaSignOutAlt />
-          </button>
-        </div>
-      </header>
+
+      <Sidebar />
 
       <main className="app-main-content">
         {success && <div className="app-alert success">{success}</div>}
@@ -292,24 +264,6 @@ const HomeUser = () => {
         </div>
       </main>
 
-      <nav className="bottom-nav">
-        <Link to="/home" className="nav-item">
-          <FaHome />
-          <span>الرئيسية</span>
-        </Link>
-        <Link to="/edit-profile" className="nav-item">
-          <FaUserEdit />
-          <span>الملف الشخصي</span>
-        </Link>
-        <Link to="/my-requests" className="nav-item">
-          <FaListAlt />
-          <span>طلباتي</span>
-        </Link>
-        <Link to="/add-request" className="nav-item">
-          <FaFileAlt />
-          <span>طلب جديد</span>
-        </Link>
-      </nav>
     </div>
   );
 };

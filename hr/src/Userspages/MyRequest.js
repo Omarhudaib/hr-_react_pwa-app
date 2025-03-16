@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import api from "./api";
-import { useNavigate, Link } from "react-router-dom";
-import { FaHome, FaListAlt, FaFileAlt, FaClock } from "react-icons/fa";
-import "./HomeUser.css";
-import Spinner from "./Spinner"
+import api from "../main/api";
+import { useNavigate} from "react-router-dom";
+import {  FaClock } from "react-icons/fa";
+import "../css/HomeUser.css";
+import Sidebar from "../components/Sidebar";
+import Spinner from "../components/Spinner"
 const MyRequests = () => {
   const [requests, setRequests] = useState([]);
   const [error, setError] = useState("");
@@ -41,12 +42,9 @@ const MyRequests = () => {
 
   return (
     <div className="mobile-app-container">
-      <header className="app-header">
-        <h1 className="app-title">طلباتي السابقة</h1>
-      </header>
-
+      <Sidebar />
       <main className="app-main-content">
-        {loading && <div className="app-alert info " style={{ padding:"25%" }}><Spinner/></div>}
+        {loading && <div className="app-alert info " style={{ padding: "25%" }}><Spinner /></div>}
         {error && <div className="app-alert error">{error}</div>}
 
         {!loading && requests.length === 0 && (
@@ -85,20 +83,7 @@ const MyRequests = () => {
         ))}
       </main>
 
-      <nav className="bottom-nav">
-        <Link to="/home" className="nav-item">
-          <FaHome />
-          <span>الرئيسية</span>
-        </Link>
-        <Link to="/my-requests" className="nav-item">
-          <FaListAlt />
-          <span>طلباتي</span>
-        </Link>
-        <Link to="/add-request" className="nav-item">
-          <FaFileAlt />
-          <span>طلب جديد</span>
-        </Link>
-      </nav>
+
     </div>
   );
 };

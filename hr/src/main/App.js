@@ -3,12 +3,15 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import axios from "axios";
 
 // Components
-import HomeUser from "./HomeUser";
-import EditProfile from "./EditProfile";
-import MyRequest from "./MyRequest";
-import UserLoginPage from "./UserLoginPage";
-import LeaveRequest from "./LeaveRequest";
-
+import HomeUser from "../Userspages/HomeUser";
+import EditProfile from "../Userspages/EditProfile";
+import MyRequest from "../Userspages/MyRequest";
+import UserLoginPage from "../Userspages/UserLoginPage";
+import LeaveRequest from "../Userspages/LeaveRequest";
+import Users from "../Permission/users/UserList";
+import UserForm from "../Permission/users/UserCreat";
+import UserForme from "../Permission/users/EditUser";
+import UserDetail from "../Permission/users/UserDetail";
 // Configure axios interceptors
 axios.interceptors.response.use(
   (response) => response,
@@ -64,6 +67,18 @@ function App() {
             </PrivateRoute>
           }
         />
+                <Route
+          path="/Users"
+          element={
+            <PrivateRoute>
+              <Users />
+            </PrivateRoute>
+          }
+        />
+            <Route path="/user/users/:id" element={<UserDetail />} />
+    <Route path="/user/users/create" element={<UserForm />} />
+    <Route path="/user/users/edit/:id" element={<UserForme />} />
+        
         <Route
           path="/add-request"
           element={

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { FaFileAlt } from "react-icons/fa";
-import api from "./api";
-import { useNavigate, Link } from "react-router-dom";
-import "./HomeUser.css";
-import { FaHome,  FaListAlt} from "react-icons/fa";
+import api from "../main/api";
+import { useNavigate } from "react-router-dom";
+import "../css/HomeUser.css";
 import Swal from "sweetalert2";
-
+import Sidebar from "../components/Sidebar";
 const LeaveRequest = () => {
   const [requestType, setRequestType] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -49,7 +48,7 @@ const LeaveRequest = () => {
       });
       return;
     }
-  
+
     setLoading(true);
     const formData = new FormData();
     formData.append("user_id", user.id);
@@ -58,7 +57,7 @@ const LeaveRequest = () => {
     formData.append("end_date", endDate);
     formData.append("reason", description);
     if (image) formData.append("image_path", image);
-  
+
     try {
       const token = localStorage.getItem("authToken");
       await api.post(
@@ -89,13 +88,10 @@ const LeaveRequest = () => {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="mobile-app-container">
-      <header className="app-header">
-        <h1 className="app-title">طلب إجازة جديد</h1>
-      </header>
-
+      <Sidebar />
       <main className="app-main-content">
         {success && <div className="app-alert success">{success}</div>}
         {error && <div className="app-alert error">{error}</div>}
@@ -166,8 +162,8 @@ const LeaveRequest = () => {
                 />
               </div>
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="app-btn success"
                 disabled={loading}
               >
@@ -178,16 +174,6 @@ const LeaveRequest = () => {
         </div>
       </main>
 
-      <nav className="bottom-nav">
-        <Link to="/home" className="nav-item">
-          <FaHome />
-          <span>الرئيسية</span>
-        </Link>
-        <Link to="/my-requests" className="nav-item">
-          <FaListAlt />
-          <span>طلباتي</span>
-        </Link>
-      </nav>
     </div>
   );
 };

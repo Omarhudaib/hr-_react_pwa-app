@@ -1,0 +1,54 @@
+.search-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px; /* مسافة بين العناصر */
+}
+
+.search-container form {
+    flex-grow: 1; /* يجعل الإدخال يأخذ المساحة المتبقية */
+}
+
+.search-container input {
+    width: 100%;
+    border-radius: 8px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    transition: all 0.3s ease-in-out;
+}
+
+.search-container input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.search-container button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-size: 14px;
+}
+
+.search-container button:hover {
+    background-color: #0056b3;
+}
+
+/* جعل التصميم متجاوبًا */
+@media (max-width: 768px) {
+    .search-container {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .search-container form {
+        width: 100%;
+    }
+
+    .search-container button {
+        width: 100%;
+    }
+}

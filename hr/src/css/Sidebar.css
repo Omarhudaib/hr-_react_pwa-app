@@ -1,0 +1,200 @@
+/* Navbar Styles */
+.navbar {
+    width: 100%;
+    background-color: #343a40;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+/* زر القائمة الجانبية */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* الروابط الرئيسية */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* الروابط داخل القائمة */
+.nav-link {
+    color: #adb5bd;
+    font-size: 18px;
+    padding: 10px 15px;
+    transition: all 0.3s ease-in-out;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    background-color: #495057;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        background-color: #343a40;
+        padding: 10px 0;
+        text-align: center;
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-link {
+        width: 100%;
+        text-align: center;
+        padding: 15px 0;
+    }
+
+    .btn-danger {
+        width: 100%;
+        text-align: center;
+    }
+}
+/* زر تسجيل الخروج */
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    font-size: 18px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-danger .icon {
+    margin-left: 8px;
+    font-size: 20px;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+    box-shadow: 0px 6px 12px rgba(220, 53, 69, 0.5);
+}
+
+.btn-danger:active {
+    background-color: #a71d2a;
+    transform: scale(0.98);
+}
+
+/* زر القائمة (Burger Menu) */
+.menu-toggle {
+    background-color: #495057;
+    color: white;
+    font-size: 26px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 8px rgba(73, 80, 87, 0.3);
+}
+
+.menu-toggle:hover {
+    background-color: #6c757d;
+    transform: scale(1.1);
+    box-shadow: 0px 6px 12px rgba(73, 80, 87, 0.5);
+}
+
+.menu-toggle:active {
+    background-color: #343a40;
+    transform: scale(0.95);
+}
+/* تحسين تصميم الروابط في الشريط الجانبي */
+.navbar .nav-link {
+    color: #ffffff;
+    font-size: 18px;
+    padding: 12px 18px;
+    transition: all 0.3s ease-in-out;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    background-color: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+/* تأثير عند المرور */
+.navbar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+}
+
+/* تأثير عند الضغط */
+.navbar .nav-link:active {
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: scale(0.95);
+}
+
+/* أيقونات داخل الروابط */
+.navbar .nav-link .icon {
+    margin-left: 8px;
+    font-size: 22px;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* تحريك الأيقونة عند المرور */
+.navbar .nav-link:hover .icon {
+    transform: rotate(10deg);
+}
+
+/* عند تفعيل الرابط الحالي */
+.navbar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.25);
+    font-weight: bold;
+}
+
+/* تحسين التصميم في الشاشات الصغيرة */
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar .nav-link {
+        width: 100%;
+        text-align: right;
+        padding: 15px;
+        font-size: 20px;
+    }
+
+    .navbar .nav-link .icon {
+        font-size: 24px;
+    }
+}

@@ -4,7 +4,14 @@
     align-items: center;
     gap: 0.5rem;
   }
-  
+
+  .spinner .bounce {
+    width: 10px;
+    height: 10px;
+    background-color: #007bff;
+    border-radius: 50%;
+    animation: bounce 0.6s infinite alternate;
+  }
   .spinner div {
     width: 10px;
     height: 10px;

@@ -103,18 +103,6 @@
     color: #721c24;
   }
   
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    display: flex;
-    justify-content: space-around;
-    padding: 1rem 0;
-    box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
-  }
-  
   .nav-item {
     display: flex;
     flex-direction: column;
@@ -415,4 +403,53 @@ body, .mobile-app-container {
       box-shadow: 0 0 5px rgba(76, 175, 80, 0.6), 0 0 10px rgba(76, 175, 80, 0.6);
     }
   }
-  
+  /* تحسين تصميم بطاقة بيانات المستخدم */
+.user-data-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px 0;
+  direction: rtl; /* دعم اللغة العربية */
+  text-align: right;
+}
+
+/* تنسيق العناوين */
+.user-data-card .card-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+/* تنسيق الفقرات داخل البطاقة */
+.user-info p {
+  font-size: 16px;
+  margin: 8px 0;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 5px;
+}
+
+/* تمييز القيم */
+.user-info span {
+  font-weight: bold;
+  color: #555;
+}
+
+/* تحسين ألوان حالة الحضور */
+.user-info .active {
+  color: green;
+  font-weight: bold;
+}
+
+.user-info .inactive {
+  color: red;
+  font-weight: bold;
+}
+.leaflet-attribution-flag {
+  display: none !important;
+}
