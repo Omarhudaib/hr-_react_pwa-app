@@ -2,7 +2,7 @@
   import axios from 'axios';
 
   const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000/api', // قم بتغيير هذا حسب خادمك
+    baseURL: 'https://newhrsys-production.up.railway.app/api', // قم بتغيير هذا حسب خادمك
   
   });
   
