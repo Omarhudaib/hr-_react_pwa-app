@@ -4,7 +4,8 @@ import { FaHome, FaUserEdit, FaListAlt, FaFileAlt, FaSignOutAlt, FaBars, FaTimes
 import "../css/Sidebar.css"; // استيراد ملف CSS
 import api from "../main/api";
 import Swal from "sweetalert2";
-
+const user = JSON.parse(localStorage.getItem("user")); // Get user data
+const departmentId = user?.department_id; // Ensure it's defined
 const Navbar = () => {
   const navigate = useNavigate(); 
   const [menuOpen, setMenuOpen] = useState(false); // التحكم في القائمة الجانبية
@@ -34,6 +35,7 @@ const Navbar = () => {
   };
 
   return (
+    <div class="navbar-container">
     <nav className="navbar">
       <div className="nav-container">
         {/* زر القائمة الجانبية */}
@@ -67,13 +69,23 @@ const Navbar = () => {
               <FaFileAlt className="icon" /> <span>إضافة مستخدم</span>
             </Link>
           )}
+{permissions.includes("Add_User") && departmentId && (
+  <Link
+    to={`/evaluate/${departmentId}`} // ✅ Use retrieved department ID
+    className="nav-link"
+    onClick={() => setMenuOpen(false)}
+  >
+    <FaFileAlt className="icon" /> <span>التقييم</span>
+  </Link>
+)}
+
 
           <button className="btn btn-danger" onClick={handleLogout}>
             <FaSignOutAlt className="icon" /> <span>تسجيل الخروج</span>
           </button>
         </div>
       </div>
-    </nav>
+    </nav></div>
   );
 };
 

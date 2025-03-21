@@ -24,19 +24,24 @@ const UserLoginPage = () => {
         e.preventDefault();
         try {
             const response = await axios.post('http://127.0.0.1:8000/api/user-login', formData);
-            const { token, user, permissions } = response.data;
+            const { token, user, permissions, is_department_admin, admin_departments } = response.data;
     
-            // حفظ التوكن والبيانات في localStorage
+            // Save data in localStorage
             localStorage.setItem('authToken', token);
-            localStorage.setItem('user', JSON.stringify(user));
-            localStorage.setItem('permissions', JSON.stringify(permissions)); // حفظ الصلاحيات
+            localStorage.setItem('user', JSON.stringify({
+                ...user,
+                is_department_admin,  // ✅ Store admin status
+                admin_departments     // ✅ Store department IDs
+            }));
+            localStorage.setItem('permissions', JSON.stringify(permissions)); 
     
-            // إعادة التوجيه للصفحة الرئيسية
+            // Redirect to home page
             navigate('/home');
         } catch (err) {
             setError('بيانات الدخول غير صحيحة. حاول مرة أخرى.');
         }
     };
+    
     
 
     return (

@@ -1,0 +1,222 @@
+.evaluation-container {
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .evaluation-card {
+    transition: transform 0.2s;
+  }
+  
+  .evaluation-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .previous-evaluations {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .multiselect-container {
+    width: 100%;
+  }
+  
+  .multiselect-dropdown {
+    border: 1px solid #ced4da !important;
+    border-radius: 4px !important;
+  }
+  /* Base Styles */
+.evaluation-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+.container-fluid{
+margin-top: 60px;}
+.main-content {
+
+  flex-grow: 1;
+  padding: 2rem;
+}
+
+.user-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* User Card */
+.user-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.user-header {
+  padding: 1.5rem;
+  background: #4a90e2;
+  color: white;
+  position: relative;
+}
+
+.user-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.department-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+/* Evaluation Form */
+.evaluation-card {
+  padding: 1.5rem;
+}
+
+.rating-slider-container {
+  margin-bottom: 1.5rem;
+}
+
+.form-range {
+  width: 100%;
+  height: 8px;
+  background: #e0e7ff;
+  border-radius: 4px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.form-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #4a90e2;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.form-range::-webkit-slider-thumb:hover {
+  background: #357abd;
+}
+
+.btn-save {
+  width: 100%;
+  padding: 0.75rem;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-save:hover {
+  background: #357abd;
+  transform: translateY(-1px);
+}
+
+/* Previous Evaluations */
+.previous-evaluations {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.previous-evaluations h4 {
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1rem;
+}
+
+.evaluation-circles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.evaluation-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.3s;
+}
+
+.evaluation-circle:hover {
+  transform: scale(1.1);
+}
+
+.circle-content {
+  text-align: center;
+}
+
+.rating {
+  font-weight: 700;
+  color: white;
+  font-size: 1.1rem;
+}
+
+.date {
+  position: absolute;
+  bottom: -20px;
+  width: 100%;
+  font-size: 0.65rem;
+  color: #666;
+  text-align: center;
+}
+
+/* Rating Colors */
+.low-rating { background: #ff6b6b; }
+.medium-rating { background: #ffd93d; }
+.high-rating { background: #6c5ce7; }
+
+/* Form Elements */
+.form-control {
+  border: 2px solid #e0e7ff;
+  border-radius: 8px;
+  padding: 0.75rem;
+  transition: border-color 0.3s;
+}
+
+.form-control:focus {
+  border-color: #4a90e2;
+  box-shadow: none;
+}
+
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.previous-evaluations {
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+  }
+  
+  .evaluation-item {
+    border-bottom: 1px solid #eee;
+    padding: 0.5rem 0;
+  }
+  
+  .evaluation-circle {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+

@@ -12,6 +12,7 @@ import Users from "../Permission/users/UserList";
 import UserForm from "../Permission/users/UserCreat";
 import UserForme from "../Permission/users/EditUser";
 import UserDetail from "../Permission/users/UserDetail";
+import EmployeeEvaluation from "../Permission/users/EmployeeEvaluation";
 // Configure axios interceptors
 axios.interceptors.response.use(
   (response) => response,
@@ -78,7 +79,8 @@ function App() {
             <Route path="/user/users/:id" element={<UserDetail />} />
     <Route path="/user/users/create" element={<UserForm />} />
     <Route path="/user/users/edit/:id" element={<UserForme />} />
-        
+    <Route path="/evaluate/:department_id" element={<EmployeeEvaluation />} />
+
         <Route
           path="/add-request"
           element={

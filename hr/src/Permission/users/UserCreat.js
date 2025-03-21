@@ -130,7 +130,7 @@ const UserForm = () => {
     <div className="mobile-app-container p-3">
  
     <div className="row">
-      <h1 className="mb-4 text-center col-12 text-primary">
+      <h1 className="mb-5 text-center col-12  lg-sm">
         {id ? 'Edit User' : 'Create User'}
       </h1>
       
