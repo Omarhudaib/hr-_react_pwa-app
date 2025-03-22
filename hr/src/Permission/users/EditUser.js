@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import api from '../../main/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoadingSpinner from '../../components/LoadingSpinner';
-import Sidebar from "../../components/Sidebar"
+import Sidebar from '../../components/Sidebar';
+import Swal from "sweetalert2"; // استدعاء مكتبة SweetAlert2
+
 const EditUser = () => {
     const [formData, setFormData] = useState({
         first_name: '',
@@ -25,17 +27,16 @@ const EditUser = () => {
         annual_vacations_days: '',
         work_type: '',
     });
-
     const [roles, setRoles] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const { id } = useParams();
+
     useEffect(() => {
         const token = localStorage.getItem('authToken');
         const companyCode = JSON.parse(localStorage.getItem('user'))?.company_id;
-    
         if (token && companyCode) {
             Promise.all([
                 api.get(`/user/users/${companyCode}/${id}`, {
@@ -57,11 +58,21 @@ const EditUser = () => {
                     setLoading(false);
                 })
                 .catch(() => {
-                    setErrors({ fetch: 'Failed to fetch data. Try again.' });
+                    Swal.fire({
+                        title: 'خطأ!',
+                        text: 'فشل في جلب البيانات. حاول مرة أخرى.',
+                        icon: 'error',
+                        confirmButtonText: 'حسنًا',
+                    });
                     setLoading(false);
                 });
         } else {
-            setErrors({ auth: 'No authentication token found.' });
+            Swal.fire({
+                title: 'خطأ!',
+                text: 'لم يتم العثور على رمز المصادقة.',
+                icon: 'error',
+                confirmButtonText: 'حسنًا',
+            });
             setLoading(false);
         }
     }, [id]);
@@ -79,19 +90,22 @@ const EditUser = () => {
             setFormData({ ...formData, image_path: null });
         }
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('authToken');
         const user = JSON.parse(localStorage.getItem('user'));
-    
         if (!token || !user) {
-            setErrors({ auth: 'Login required.' });
+            Swal.fire({
+                title: 'خطأ!',
+                text: 'الرجاء تسجيل الدخول.',
+                icon: 'error',
+                confirmButtonText: 'حسنًا',
+            });
             return;
         }
-    
         try {
             const formDataToSend = new FormData();
-    
             // Append only the required fields
             const fields = [
                 'first_name', 'last_name', 'user_code', 'password', 'role_id', 'department_id',
@@ -99,23 +113,19 @@ const EditUser = () => {
                 'marital_status', 'attendtaby', 'date_of_birth', 'holidays', 'salary',
                 'sick_days', 'annual_vacations_days',
             ];
-    
             fields.forEach((field) => {
                 if (formData[field] !== null && formData[field] !== undefined) {
                     formDataToSend.append(field, formData[field]);
                 }
             });
-    
             // Append required fields
             formDataToSend.append('id', id);
             formDataToSend.append('company_code', user.company_id);
             formDataToSend.append('company_id', user.company_id);
-    
             // Append the image file if it exists
             if (formData.image_path instanceof File) {
                 formDataToSend.append('image_path', formData.image_path);
             }
-    
             // Make the API call to update the user
             const companyCode = JSON.parse(localStorage.getItem('user'))?.company_id;
             const response = await api.post(`/user/users/update/${companyCode}`, formDataToSend, {
@@ -124,311 +134,315 @@ const EditUser = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-    
             if (response.status === 200) {
+                Swal.fire({
+                    title: 'نجاح!',
+                    text: 'تم تحديث بيانات المستخدم بنجاح.',
+                    icon: 'success',
+                    confirmButtonText: 'حسنًا',
+                });
                 navigate('/users');
             }
-        }catch (error) {
+        } catch (error) {
             if (error.response && error.response.data && error.response.data.errors) {
-                setErrors(error.response.data.errors);  // Update this line
+                setErrors(error.response.data.errors);
+                Swal.fire({
+                    title: 'خطأ!',
+                    text: 'يرجى تصحيح الأخطاء التالية.',
+                    icon: 'error',
+                    confirmButtonText: 'حسنًا',
+                });
             } else {
-                setErrors({ submit: 'Failed to update user. Try again.' });
+                Swal.fire({
+                    title: 'خطأ!',
+                    text: 'فشل في تحديث بيانات المستخدم. حاول مرة أخرى.',
+                    icon: 'error',
+                    confirmButtonText: 'حسنًا',
+                });
             }
         }
-        
     };
 
-    return (<>
-<Sidebar/>
-        <div className="mobile-app-container p-3">
-
-        <h2 className='mb-4 text-center text-primary'>Edit User</h2>
-        {loading ? <LoadingSpinner /> : (
-            <form onSubmit={handleSubmit}>
-                {/* عرض الأخطاء */}
-                {Object.keys(errors).map((key) => (
-                    errors[key] && <div key={key} className="alert alert-danger">{errors[key]}</div>
-                ))}
-    
-                {/* 1. بيانات الاسم الكامل */}
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>First Name</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={formData.first_name || ''}
-                                onChange={(e) => handleInputChange('first_name', e.target.value)}
-                            />
+    return (
+        <>
+            <Sidebar />
+            <div className="mobile-app-container p-3">
+                <h2 className='mb-4 text-center text-primary'>تعديل المستخدم</h2>
+                {loading ? <LoadingSpinner /> : (
+                    <form onSubmit={handleSubmit}>
+                        {/* عرض الأخطاء */}
+                        {Object.keys(errors).map((key) => (
+                            errors[key] && <div key={key} className="alert alert-danger">{errors[key]}</div>
+                        ))}
+                        {/* 1. بيانات الاسم الكامل */}
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>الاسم الأول</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={formData.first_name || ''}
+                                        onChange={(e) => handleInputChange('first_name', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>اسم الأب</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={formData.middle_name || ''}
+                                        onChange={(e) => handleInputChange('middle_name', e.target.value)}
+                                    />
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Middle Name</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={formData.middle_name || ''}
-                                onChange={(e) => handleInputChange('middle_name', e.target.value)}
-                            />
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>اسم العائلة</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={formData.last_name || ''}
+                                        onChange={(e) => handleInputChange('last_name', e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>اسم الجد</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={formData.second_name || ''}
+                                        onChange={(e) => handleInputChange('second_name', e.target.value)}
+                                    />
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-    
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Last Name</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={formData.last_name || ''}
-                                onChange={(e) => handleInputChange('last_name', e.target.value)}
-                            />
+                        {/* 2. صورة المستخدم */}
+                        <div className="row">
+                            <div className="col-md-12">
+                                <div className="form-group">
+                                    <label>الصورة</label>
+                                    <input type="file" className="form-control" onChange={handleFileChange} />
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Second Name</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={formData.second_name || ''}
-                                onChange={(e) => handleInputChange('second_name', e.target.value)}
-                            />
+                        {/* 3. بيانات المصادقة */}
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>رمز المستخدم</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={formData.user_code || ''}
+                                        onChange={(e) => handleInputChange('user_code', e.target.value)}
+                                    />
+                                    {errors.user_code && <small className="text-danger">{errors.user_code}</small>}
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>كلمة المرور</label>
+                                    <input
+                                        type="password"
+                                        className="form-control"
+                                        value={formData.password || ''}
+                                        onChange={(e) => handleInputChange('password', e.target.value)}
+                                    />
+                                    {errors.password && <small className="text-danger">{errors.password}</small>}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-    
-                {/* 2. صورة المستخدم */}
-                <div className="row">
-                    <div className="col-md-12">
-                        <div className="form-group">
-                            <label>Image</label>
-                            <input type="file" className="form-control" onChange={handleFileChange} />
+                        {/* 4. الانتماء التنظيمي */}
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>الدور الوظيفي</label>
+                                    <select
+                                        className="form-control"
+                                        value={formData.role_id || ''}
+                                        onChange={(e) => handleInputChange('role_id', e.target.value)}
+                                    >
+                                        <option value="">اختر الدور الوظيفي</option>
+                                        {roles.map((role) => (
+                                            <option key={role.id} value={role.id}>
+                                                {role.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.role_id && <small className="text-danger">{errors.role_id}</small>}
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>القسم</label>
+                                    <select
+                                        className="form-control"
+                                        value={formData.department_id || ''}
+                                        onChange={(e) => handleInputChange('department_id', e.target.value)}
+                                    >
+                                        <option value="">اختر القسم</option>
+                                        {departments.map((department) => (
+                                            <option key={department.id} value={department.id}>
+                                                {department.dep_name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.department_id && <small className="text-danger">{errors.department_id}</small>}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-    
-                {/* 3. بيانات المصادقة */}
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>User Code</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={formData.user_code || ''}
-                                onChange={(e) => handleInputChange('user_code', e.target.value)}
-                            />
-                            {errors.user_code && <small className="text-danger">{errors.user_code}</small>}
+                        {/* 5. بيانات شخصية إضافية */}
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>الرقم الوطني</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={formData.national_id || ''}
+                                        onChange={(e) => handleInputChange('national_id', e.target.value)}
+                                    />
+                                    {errors.national_id && <small className="text-danger">{errors.national_id}</small>}
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>الحالة الاجتماعية</label>
+                                    <select
+                                        className="form-control"
+                                        value={formData.marital_status || ''}
+                                        onChange={(e) => handleInputChange('marital_status', e.target.value)}
+                                    >
+                                        <option value="">اختر الحالة الاجتماعية</option>
+                                        <option value="single">أعزب</option>
+                                        <option value="married">متزوج</option>
+                                        <option value="divorced">مطلق</option>
+                                        <option value="widowed">أرمل</option>
+                                    </select>
+                                    {errors.marital_status && <small className="text-danger">{errors.marital_status}</small>}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Password</label>
-                            <input
-                                type="password"
-                                className="form-control"
-                                value={formData.password || ''}
-                                onChange={(e) => handleInputChange('password', e.target.value)}
-                            />
-                            {errors.password && <small className="text-danger">{errors.password}</small>}
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>تاريخ الميلاد</label>
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        value={formData.date_of_birth || ''}
+                                        onChange={(e) => handleInputChange('date_of_birth', e.target.value)}
+                                    />
+                                    {errors.date_of_birth && <small className="text-danger">{errors.date_of_birth}</small>}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-    
-                {/* 4. الانتماء التنظيمي */}
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Role</label>
-                            <select
-                                className="form-control"
-                                value={formData.role_id || ''}
-                                onChange={(e) => handleInputChange('role_id', e.target.value)}
-                            >
-                                <option value="">Select Role</option>
-                                {roles.map((role) => (
-                                    <option key={role.id} value={role.id}>
-                                        {role.name}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.role_id && <small className="text-danger">{errors.role_id}</small>}
+                        {/* 6. بيانات العمل */}
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>الراتب</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        value={formData.salary || ''}
+                                        onChange={(e) => handleInputChange('salary', e.target.value)}
+                                    />
+                                    {errors.salary && <small className="text-danger">{errors.salary}</small>}
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>العطل</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        value={formData.holidays || ''}
+                                        onChange={(e) => handleInputChange('holidays', e.target.value)}
+                                    />
+                                    {errors.holidays && <small className="text-danger">{errors.holidays}</small>}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Department</label>
-                            <select
-                                className="form-control"
-                                value={formData.department_id || ''}
-                                onChange={(e) => handleInputChange('department_id', e.target.value)}
-                            >
-                                <option value="">Select Department</option>
-                                {departments.map((department) => (
-                                    <option key={department.id} value={department.id}>
-                                        {department.dep_name}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.department_id && <small className="text-danger">{errors.department_id}</small>}
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>إجازة مرضية</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        value={formData.sick_days || ''}
+                                        onChange={(e) => handleInputChange('sick_days', e.target.value)}
+                                    />
+                                    {errors.sick_days && <small className="text-danger">{errors.sick_days}</small>}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-    
-                {/* 5. بيانات شخصية إضافية */}
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>National ID</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                value={formData.national_id || ''}
-                                onChange={(e) => handleInputChange('national_id', e.target.value)}
-                            />
-                            {errors.national_id && <small className="text-danger">{errors.national_id}</small>}
+                        {/* 7. إعدادات الحضور */}
+                        <div className="row">
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>نوع الحضور</label>
+                                    <select
+                                        className="form-control"
+                                        value={formData.attendtaby || ''}
+                                        onChange={(e) => handleInputChange('attendtaby', e.target.value)}
+                                    >
+                                        <option value="">اختر نوع الحضور</option>
+                                        <option value="any location">أي موقع</option>
+                                        <option value="dep location">موقع القسم</option>
+                                    </select>
+                                    {errors.attendtaby && <small className="text-danger">{errors.attendtaby}</small>}
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <div className="form-group">
+                                    <label>نوع الوظيفة لدامان</label>
+                                    <select
+                                        className="form-control"
+                                        value={formData.work_type || ''}
+                                        onChange={(e) => handleInputChange('work_type', e.target.value)}
+                                    >
+                                        <option value="normal">عادي</option>
+                                        <option value="hazardous">خطر</option>
+                                    </select>
+                                    {errors.work_type && <small className="text-danger">{errors.work_type}</small>}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Marital Status</label>
-                            <select
-                                className="form-control"
-                                value={formData.marital_status || ''}
-                                onChange={(e) => handleInputChange('marital_status', e.target.value)}
-                            >
-                                <option value="">Select Marital Status</option>
-                                <option value="single">Single</option>
-                                <option value="married">Married</option>
-                                <option value="divorced">Divorced</option>
-                                <option value="widowed">Widowed</option>
-                            </select>
-                            {errors.marital_status && <small className="text-danger">{errors.marital_status}</small>}
+                        {/* 8. معلومات إضافية */}
+                        <div className="row">
+                            <div className="col-md-12">
+                                <div className="form-group">
+                                    <label>معلومات إضافية</label>
+                                    <textarea
+                                        className="form-control"
+                                        value={formData.additional_information || ''}
+                                        onChange={(e) => handleInputChange('additional_information', e.target.value)}
+                                    />
+                                    {errors.additional_information && (
+                                        <small className="text-danger">{errors.additional_information}</small>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-    
-                <div className="row">
-                    <div className="col-md-6">
+                        {/* زر الإرسال */}
                         <div className="form-group">
-                            <label>Date of Birth</label>
-                            <input
-                                type="date"
-                                className="form-control"
-                                value={formData.date_of_birth || ''}
-                                onChange={(e) => handleInputChange('date_of_birth', e.target.value)}
-                            />
-                            {errors.date_of_birth && <small className="text-danger">{errors.date_of_birth}</small>}
+                            <button type="submit" className="btn btn-primary">
+                                تحديث المستخدم
+                            </button>
                         </div>
-                    </div>
-                </div>
-    
-                {/* 6. بيانات العمل */}
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Salary</label>
-                            <input
-                                type="number"
-                                className="form-control"
-                                value={formData.salary || ''}
-                                onChange={(e) => handleInputChange('salary', e.target.value)}
-                            />
-                            {errors.salary && <small className="text-danger">{errors.salary}</small>}
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Holidays</label>
-                            <input
-                                type="number"
-                                className="form-control"
-                                value={formData.holidays || ''}
-                                onChange={(e) => handleInputChange('holidays', e.target.value)}
-                            />
-                            {errors.holidays && <small className="text-danger">{errors.holidays}</small>}
-                        </div>
-                    </div>
-                </div>
-    
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Sick Days</label>
-                            <input
-                                type="number"
-                                className="form-control"
-                                value={formData.sick_days || ''}
-                                onChange={(e) => handleInputChange('sick_days', e.target.value)}
-                            />
-                            {errors.sick_days && <small className="text-danger">{errors.sick_days}</small>}
-                        </div>
-                    </div>
-                </div>
-    
-                {/* 7. إعدادات الحضور */}
-                <div className="row">
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Attendance Type</label>
-                            <select
-                                className="form-control"
-                                value={formData.attendtaby || ''}
-                                onChange={(e) => handleInputChange('attendtaby', e.target.value)}
-                            >
-                                <option value="">Select Attendance Type</option>
-                                <option value="any location">Any Location</option>
-                                <option value="dep location">Department Location</option>
-                            </select>
-                            {errors.attendtaby && <small className="text-danger">{errors.attendtaby}</small>}
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label>Select job for daman</label>
-                            <select
-                                className="form-control"
-                                value={formData.work_type || ''}
-                                onChange={(e) => handleInputChange('work_type', e.target.value)}
-                            >
-                                <option value="normal">Normal</option>
-                                <option value="hazardous">Hazardous</option>
-                            </select>
-                            {errors.work_type && <small className="text-danger">{errors.work_type}</small>}
-                        </div>
-                    </div>
-                </div>
-    
-                {/* 8. معلومات إضافية */}
-                <div className="row">
-                    <div className="col-md-12">
-                        <div className="form-group">
-                            <label>Additional Information</label>
-                            <textarea
-                                className="form-control"
-                                value={formData.additional_information || ''}
-                                onChange={(e) => handleInputChange('additional_information', e.target.value)}
-                            />
-                            {errors.additional_information && (
-                                <small className="text-danger">{errors.additional_information}</small>
-                            )}
-                        </div>
-                    </div>
-                </div>
-    
-                {/* زر الإرسال */}
-                <div className="form-group">
-                    <button type="submit" className="btn btn-primary">
-                        Update User
-                    </button>
-                </div>
-            </form>
-        )}
-    </div></>
+                    </form>
+                )}
+            </div>
+        </>
     );
 };
 

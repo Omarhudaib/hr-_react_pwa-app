@@ -1,11 +1,36 @@
 /* HomeUser.css */
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Tajawal', Arial, sans-serif; /* Use Tajawal as the default font */
+  line-height: 1.6;
+  background-color: #f8f9fa;
+  color: #333;
+  direction: rtl; /* For Arabic text */
+  text-align: right; /* Align text to the right */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Tajawal', Arial, sans-serif;
+  font-weight: 700; /* Bold headings */
+}
+
+p, span, label, input, textarea, button, select {
+  font-family: 'Tajawal', Arial, sans-serif;
+  font-weight: 400; /* Normal text */
+}
 .mobile-app-container {
  
     max-width: 100%;
     margin: 0 auto;
     background-color: #f5f5f5;
     min-height: 100vh;
-     margin-top: 60px;
   }
   
   .app-header {
@@ -55,6 +80,8 @@
   }
   
   .app-btn {
+    font-family: 'Tajawal', Arial, sans-serif;
+
     display: block;
     width: 100%;
     padding: 0.8rem;
@@ -67,22 +94,29 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    
   }
   
 
   
   .app-btn.success {
-    background-color: #27ae60;
+    font-family: 'Tajawal', Arial, sans-serif;
+
+    background-color: #1df10a;
     color: white;
   }
   
   .app-btn.warning {
-    background-color: #f39c12;
+    font-family: 'Tajawal', Arial, sans-serif;
+
+    background-color: #f7bd60;
     color: white;
   }
   
   .app-btn.secondary {
-    background-color: #3498db;
+    font-family: 'Tajawal', Arial, sans-serif;
+
+    background-color: #1e5cce;
     color: white;
   }
   

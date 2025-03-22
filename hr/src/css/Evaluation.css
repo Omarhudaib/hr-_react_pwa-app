@@ -32,8 +32,32 @@
   min-height: 100vh;
   background: #f5f7fa;
 }
-.container-fluid{
-margin-top: 60px;}
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Tajawal', Arial, sans-serif; /* Use Tajawal as the default font */
+    line-height: 1.6;
+    background-color: #f8f9fa;
+    color: #333;
+    direction: rtl; /* For Arabic text */
+    text-align: right; /* Align text to the right */
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Tajawal', Arial, sans-serif;
+    font-weight: 700; /* Bold headings */
+  }
+  
+  p, span, label, input, textarea, button, select {
+    font-family: 'Tajawal', Arial, sans-serif;
+    font-weight: 400; /* Normal text */
+  }
 .main-content {
 
   flex-grow: 1;
