@@ -23,7 +23,7 @@ const UserLoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/user-login', formData);
+            const response = await axios.post('https://newhrsys-production.up.railway.app/api/user-login', formData);
             const { token, user, permissions, is_department_admin, admin_departments } = response.data;
     
             // Save data in localStorage
